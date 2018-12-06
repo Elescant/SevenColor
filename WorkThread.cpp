@@ -6,11 +6,8 @@
 
 WorkThread::WorkThread()
 {
-    qDebug()<<this->thread();
     serial = new QSerialPort();
-    qDebug()<<"serial thread"<<serial->thread();
     lin_handle = new Lin(serial);
-    qDebug()<<"lin thread"<<lin_handle->thread();
     need_send = false;
 }
 
@@ -48,7 +45,6 @@ bool WorkThread::config(void)
 
 void WorkThread::run()
 {
-    qDebug()<<"run thread"<<this->thread();
     config();
     if(serial_valid)
     {
@@ -64,10 +60,8 @@ void WorkThread::run()
         {
             if(serial_valid && serial->isOpen())
             {
-                qDebug()<<"start";
                 lin_handle->setIdData(LINID_0x2A,data,8);
                 bool ret = lin_handle->sendHeader(LINID_0x2A);
-                qDebug()<<"end";
                 emit wellDone(ret);
             }
             need_send = false;

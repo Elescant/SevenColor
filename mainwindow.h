@@ -5,6 +5,7 @@
 #include <Lin.h>
 #include <QSerialPort>
 #include "WorkThread.h"
+#include <QButtonGroup>
 
 namespace Ui {
 class MainWindow;
@@ -40,11 +41,13 @@ private slots:
     void on_label_6_clicked();
 
     void on_label_7_clicked();
-    void sendLinMsg(QColor color);
+    void sendLinMsg();
 
 private:
     Ui::MainWindow *ui;
     WorkThread *workThread;
+    QColor color;
+    QButtonGroup *btngroup;
     uint8_t dat[8];
 };
 

@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QTimer>
 #include "WorkThread.h"
+#include <QButtonGroup>
 
 #define LINID_0x2A 0x2A
 
@@ -14,7 +15,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    btngroup = new QButtonGroup(this);
+    btngroup->addButton(ui->radioBtn_off,0);
+    btngroup->addButton(ui->radioBtn_on,1);
+    btngroup->addButton(ui->radioBtn_slow,2);
+    btngroup->addButton(ui->radioBtn_fast,3);
+    btngroup->addButton(ui->radioBtn_gra,4);
+
     connect(this,&MainWindow::colorSelect,this,&MainWindow::sendLinMsg);
+    connect(btngroup,(void (QButtonGroup::*)(int))&QButtonGroup::buttonClicked,this,&MainWindow::sendLinMsg);
+    connect(ui->hSlider_level,&QSlider::valueChanged,this,&MainWindow::sendLinMsg);
 }
 
 MainWindow::~MainWindow()
@@ -24,13 +34,12 @@ MainWindow::~MainWindow()
 
 bool MainWindow::config()
 {
-    bool ret;
     workThread = new WorkThread();
-//    workThread->config();
+
     workThread->start();
     connect(this,&MainWindow::sendMsg,workThread,&WorkThread::sendMsgSlot);
     connect(workThread,&WorkThread::wellDone,this,&MainWindow::sendMsgRetSlot);
-    return ret;
+    return true;
 }
 
 void MainWindow::sendMsgRetSlot(bool ret)
@@ -40,48 +49,50 @@ void MainWindow::sendMsgRetSlot(bool ret)
 
 void MainWindow::on_label_1_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(255,0,0);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_2_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(0,255,0);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_3_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(0,0,255);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_4_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(255,255,0);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_5_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(255,0,255);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_6_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(0,255,255);
     emit colorSelect(color);
 }
 
 void MainWindow::on_label_7_clicked()
 {
-    QColor color(255,0,0);
+    color = QColor(255,255,255);
     emit colorSelect(color);
 }
 
-void MainWindow::sendLinMsg(QColor color)
+void MainWindow::sendLinMsg()
 {
+    uint8_t fun=0;
+
     dat[0] = 0xFF;
     dat[1] = 0xFF;
     dat[2] = 0xFF;
@@ -90,7 +101,8 @@ void MainWindow::sendLinMsg(QColor color)
     dat[4] = color.green();
     dat[5] = color.blue();
 
-    dat[6] = ui->hSlider_level->value();//function and brightness
+    fun = (btngroup->checkedId() << 5);
+    dat[6] = fun | ui->hSlider_level->value();//function and brightness
     dat[7] = 0xAA;//crc
     emit sendMsg(dat);
 }
