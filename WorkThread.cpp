@@ -1,7 +1,6 @@
 #include "WorkThread.h"
 #include <QDebug>
-#include <QMessageBox>
-
+#include "MyMessageBox.h"
 #define LINID_0x2A 0x2A
 
 WorkThread::WorkThread()
@@ -23,7 +22,7 @@ bool WorkThread::config(void)
     if(serial->isOpen())
     {
         serial_valid  = false;
-        QMessageBox::critical(NULL,"设备打开失败","LIN设备被占用,请关闭其被他程序",QMessageBox::Yes | QMessageBox::Cancel,QMessageBox::Cancel);
+        MyMessageBox::information("设备打开失败","LIN设备被占用,请关闭其被他程序",QMessageBox::Yes | QMessageBox::Cancel,QMessageBox::Cancel);
     }else
     {
         if(serial->open(QIODevice::ReadWrite))
@@ -32,7 +31,7 @@ bool WorkThread::config(void)
         }else
         {
             serial_valid = false;
-            QMessageBox::critical(NULL,"LIN 设备打开失败","未找到LIN设备或以管理员权限运行",QMessageBox::Yes | QMessageBox::Cancel,QMessageBox::Cancel);
+            MyMessageBox::information("LIN 设备打开失败","未找到LIN设备或以管理员权限运行",QMessageBox::Yes | QMessageBox::Cancel,QMessageBox::Cancel);
         }
     }
 

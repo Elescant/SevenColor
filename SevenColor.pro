@@ -28,13 +28,15 @@ SOURCES += \
         mainwindow.cpp \
     CusLabel.cpp \
     Lin.cpp \
-    WorkThread.cpp
+    WorkThread.cpp \
+    MyMessageBox.cpp
 
 HEADERS += \
         mainwindow.h \
     CusLabel.h \
     Lin.h \
-    WorkThread.h
+    WorkThread.h \
+    MyMessageBox.h
 
 FORMS += \
         mainwindow.ui
